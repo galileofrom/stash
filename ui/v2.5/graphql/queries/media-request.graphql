@@ -1,0 +1,11 @@
+query FindMediaRequest($id: ID!) {
+  findMediaRequest(id: $id) {
+    ...MediaRequestData
+  }
+}
+
+query FindMediaRequests($filter: MediaRequestFilter) {
+  findMediaRequests(filter: $filter) {
+    ...MediaRequestData
+  }
+}

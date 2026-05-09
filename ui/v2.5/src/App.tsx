@@ -75,6 +75,7 @@ const Tags = lazyComponent(() => import("./components/Tags/Tags"));
 const Images = lazyComponent(() => import("./components/Images/Images"));
 const Setup = lazyComponent(() => import("./components/Setup/Setup"));
 const Migrate = lazyComponent(() => import("./components/Setup/Migrate"));
+const Requests = lazyComponent(() => import("./components/Requests/Requests"));
 
 const SceneFilenameParser = lazyComponent(
   () => import("./components/SceneFilenameParser/SceneFilenameParser")
@@ -271,6 +272,7 @@ export const App: React.FC = () => {
             />
             <Route path="/setup" component={Setup} />
             <Route path="/migrate" component={Migrate} />
+            <Route path="/requests" component={Requests} />
             <PluginRoutes />
             <Route component={PageNotFound} />
           </Switch>

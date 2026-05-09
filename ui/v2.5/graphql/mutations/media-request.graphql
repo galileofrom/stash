@@ -1,0 +1,27 @@
+mutation MediaRequestCreate($input: MediaRequestCreateInput!) {
+  mediaRequestCreate(input: $input) {
+    ...MediaRequestData
+  }
+}
+
+mutation MediaRequestSearch($id: ID!) {
+  mediaRequestSearch(id: $id) {
+    ...MediaRequestData
+  }
+}
+
+mutation MediaRequestApprove($release_id: ID!) {
+  mediaRequestApprove(release_id: $release_id) {
+    ...MediaRequestData
+  }
+}
+
+mutation MediaRequestReject($id: ID!, $reason: String) {
+  mediaRequestReject(id: $id, reason: $reason) {
+    ...MediaRequestData
+  }
+}
+
+mutation MediaRequestDestroy($id: ID!) {
+  mediaRequestDestroy(id: $id)
+}

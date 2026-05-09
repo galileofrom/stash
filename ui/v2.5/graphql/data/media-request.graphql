@@ -1,0 +1,37 @@
+fragment MediaReleaseData on MediaRelease {
+  id
+  request_id
+  indexer
+  indexer_id
+  guid
+  title
+  download_url
+  magnet_url
+  info_url
+  size
+  seeders
+  leechers
+  publish_date
+  category
+  protocol
+  selected
+  grab_status
+  grab_error
+  created_at
+}
+
+fragment MediaRequestData on MediaRequest {
+  id
+  title
+  studio
+  external_id
+  external_source
+  status
+  requested_by
+  notes
+  created_at
+  updated_at
+  releases {
+    ...MediaReleaseData
+  }
+}

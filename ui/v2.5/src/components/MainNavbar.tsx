@@ -29,6 +29,7 @@ import {
   faHeart,
   faImage,
   faImages,
+  faInbox,
   faMapMarkerAlt,
   faPlayCircle,
   faQuestionCircle,
@@ -94,6 +95,10 @@ const messages = defineMessages({
     id: "statistics",
     defaultMessage: "Statistics",
   },
+  requests: {
+    id: "requests",
+    defaultMessage: "Requests",
+  },
 });
 
 const allMenuItems: IMenuItem[] = [
@@ -157,6 +162,14 @@ const allMenuItems: IMenuItem[] = [
     href: "/tags",
     icon: faTag,
     hotkey: "g t",
+    userCreatable: true,
+  },
+  {
+    name: "requests",
+    message: messages.requests,
+    href: "/requests",
+    icon: faInbox,
+    hotkey: "g r",
     userCreatable: true,
   },
 ];
