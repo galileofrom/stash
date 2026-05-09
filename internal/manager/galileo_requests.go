@@ -7,7 +7,9 @@ import (
 
 	"github.com/stashapp/stash/internal/manager/config"
 	"github.com/stashapp/stash/pkg/logger"
+	"github.com/stashapp/stash/pkg/models"
 	"github.com/stashapp/stash/pkg/requests"
+	"github.com/stashapp/stash/pkg/txn"
 )
 
 // startMediaRequestsWorker boots the background worker if Prowlarr is enabled.
@@ -25,7 +27,9 @@ func (s *Manager) startMediaRequestsWorker(ctx context.Context) {
 		return
 	}
 
-	store := s.Database.MediaRequest
+	// Wrap the store so worker calls automatically run inside a stash txn,
+	// matching the behaviour of every other repository access in the codebase.
+	store := newTxnRequestStore(s.Database.MediaRequest, s.Repository.TxnManager)
 	prowlarr := requests.NewProwlarrClient(cfg.ProwlarrClientConfig())
 
 	// qBittorrent client is optional; absence simply means downloads cannot
@@ -85,6 +89,100 @@ func buildQBittorrentConfig(c *config.Config) (requests.QBittorrentConfig, bool)
 		Username: c.GetRequestsQBittorrentUser(),
 		Password: c.GetRequestsQBittorrentPass(),
 	}, true
+}
+
+// txnRequestStore wraps a sqlite.MediaRequestStore so its methods run inside
+// a transaction. The worker calls store methods without an outer ctx already
+// in a txn (it owns its own goroutine), so we open one per call.
+type txnRequestStore struct {
+	inner requests.Repository
+	txnMgr models.TxnManager
+}
+
+func newTxnRequestStore(inner requests.Repository, txnMgr models.TxnManager) *txnRequestStore {
+	return &txnRequestStore{inner: inner, txnMgr: txnMgr}
+}
+
+func (s *txnRequestStore) inRead(ctx context.Context, fn func(ctx context.Context) error) error {
+	return txn.WithReadTxn(ctx, s.txnMgr, fn)
+}
+
+func (s *txnRequestStore) inWrite(ctx context.Context, fn func(ctx context.Context) error) error {
+	return txn.WithTxn(ctx, s.txnMgr, fn)
+}
+
+func (s *txnRequestStore) CreateRequest(ctx context.Context, r *requests.MediaRequest) (id int, err error) {
+	err = s.inWrite(ctx, func(ctx context.Context) error {
+		id, err = s.inner.CreateRequest(ctx, r)
+		return err
+	})
+	return
+}
+
+func (s *txnRequestStore) UpdateRequest(ctx context.Context, r *requests.MediaRequest) error {
+	return s.inWrite(ctx, func(ctx context.Context) error {
+		return s.inner.UpdateRequest(ctx, r)
+	})
+}
+
+func (s *txnRequestStore) GetRequest(ctx context.Context, id int) (out *requests.MediaRequest, err error) {
+	err = s.inRead(ctx, func(ctx context.Context) error {
+		out, err = s.inner.GetRequest(ctx, id)
+		return err
+	})
+	return
+}
+
+func (s *txnRequestStore) ListRequests(ctx context.Context, status requests.Status) (out []*requests.MediaRequest, err error) {
+	err = s.inRead(ctx, func(ctx context.Context) error {
+		out, err = s.inner.ListRequests(ctx, status)
+		return err
+	})
+	return
+}
+
+func (s *txnRequestStore) UpsertReleases(ctx context.Context, requestID int, releases []*requests.Release) error {
+	return s.inWrite(ctx, func(ctx context.Context) error {
+		return s.inner.UpsertReleases(ctx, requestID, releases)
+	})
+}
+
+func (s *txnRequestStore) ListReleases(ctx context.Context, requestID int) (out []*requests.Release, err error) {
+	err = s.inRead(ctx, func(ctx context.Context) error {
+		out, err = s.inner.ListReleases(ctx, requestID)
+		return err
+	})
+	return
+}
+
+func (s *txnRequestStore) GetRelease(ctx context.Context, id int) (out *requests.Release, err error) {
+	err = s.inRead(ctx, func(ctx context.Context) error {
+		out, err = s.inner.GetRelease(ctx, id)
+		return err
+	})
+	return
+}
+
+func (s *txnRequestStore) CreateDownload(ctx context.Context, d *requests.Download) (id int, err error) {
+	err = s.inWrite(ctx, func(ctx context.Context) error {
+		id, err = s.inner.CreateDownload(ctx, d)
+		return err
+	})
+	return
+}
+
+func (s *txnRequestStore) UpdateDownload(ctx context.Context, d *requests.Download) error {
+	return s.inWrite(ctx, func(ctx context.Context) error {
+		return s.inner.UpdateDownload(ctx, d)
+	})
+}
+
+func (s *txnRequestStore) ListDownloads(ctx context.Context, status requests.DownloadStatus) (out []*requests.Download, err error) {
+	err = s.inRead(ctx, func(ctx context.Context) error {
+		out, err = s.inner.ListDownloads(ctx, status)
+		return err
+	})
+	return
 }
 
 type galileoWorkerLogger struct{}

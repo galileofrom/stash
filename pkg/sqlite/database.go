@@ -34,10 +34,11 @@ const (
 	cacheSizeEnv = "STASH_SQLITE_CACHE_SIZE"
 )
 
-// Galileo fork: bumped to 90000 to leave room for upstream migrations < 90000.
-// Upstream stash uses sequential numbering (currently at 85). Keeping our
-// fork-specific migrations in the 90000+ range avoids merge conflicts.
-var appSchemaVersion uint = 90000
+// Galileo fork: bumped from 85 -> 86 by adding 86_media_requests.up.sql.
+// Stash's migrator (pkg/sqlite/migrate.go) requires strict sequential
+// numbering, so a high-number gap is not viable. Upstream merges that
+// introduce a new 86 will conflict and require a renumber on this side.
+var appSchemaVersion uint = 86
 
 //go:embed migrations/*.sql
 var migrationsBox embed.FS
