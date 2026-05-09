@@ -31,6 +31,10 @@ func (i *Config) GetRequestsRankSeederWeight() float64   { return i.getFloat64(R
 func (i *Config) GetRequestsRankFreeleechBoost() float64 { return i.getFloat64(RequestsRankFreeleechBoost) }
 func (i *Config) GetRequestsRankAgeDecayDays() float64   { return i.getFloat64(RequestsRankAgeDecayDays) }
 
+func (i *Config) GetRequestsQBittorrentURL() string  { return i.getString(RequestsQBittorrentURL) }
+func (i *Config) GetRequestsQBittorrentUser() string { return i.getString(RequestsQBittorrentUser) }
+func (i *Config) GetRequestsQBittorrentPass() string { return i.getString(RequestsQBittorrentPass) }
+
 // intSliceFromAny normalises common viper representations of an int list:
 // []int, []interface{} of numbers, or a comma-separated string.
 func intSliceFromAny(v interface{}) []int {

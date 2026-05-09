@@ -178,6 +178,11 @@ const (
 	RequestsRankFreeleechBoost = "requests.rank.freeleech_boost"
 	RequestsRankAgeDecayDays  = "requests.rank.age_decay_days"
 
+	// qBittorrent connection (optional; only needed for download polling).
+	RequestsQBittorrentURL  = "requests.qbittorrent.url"
+	RequestsQBittorrentUser = "requests.qbittorrent.username"
+	RequestsQBittorrentPass = "requests.qbittorrent.password"
+
 	PythonPath = "python_path"
 
 	// plugin options
