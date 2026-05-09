@@ -433,3 +433,19 @@ var (
 		idColumn: goqu.T(savedFilterTable).Col(idColumn),
 	}
 )
+
+// Galileo fork: media request workflow tables.
+var (
+	mediaRequestTableMgr = &table{
+		table:    goqu.T(mediaRequestTable),
+		idColumn: goqu.T(mediaRequestTable).Col(idColumn),
+	}
+	mediaReleaseTableMgr = &table{
+		table:    goqu.T(mediaRequestReleaseTable),
+		idColumn: goqu.T(mediaRequestReleaseTable).Col(idColumn),
+	}
+	mediaDownloadTableMgr = &table{
+		table:    goqu.T(mediaRequestDownloadsTable),
+		idColumn: goqu.T(mediaRequestDownloadsTable).Col(idColumn),
+	}
+)

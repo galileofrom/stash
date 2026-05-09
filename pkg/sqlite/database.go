@@ -82,6 +82,8 @@ type storeRepository struct {
 	Studio         *StudioStore
 	Tag            *TagStore
 	Group          *GroupStore
+	// Galileo fork:
+	MediaRequest *MediaRequestStore
 }
 
 type Database struct {
@@ -120,6 +122,7 @@ func NewDatabase() *Database {
 		Tag:            tagStore,
 		Group:          NewGroupStore(blobStore),
 		SavedFilter:    NewSavedFilterStore(),
+		MediaRequest:   NewMediaRequestStore(),
 	}
 
 	ret := &Database{
