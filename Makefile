@@ -371,8 +371,13 @@ endif
 .PHONY: ui
 ui: pre-ui generate ui-only generate-login-locale
 
+# Galileo fork: ui-only must not require Go. Upstream lists `generate` and
+# `ui` as prerequisites (which transitively pull in generate-backend → go);
+# inside the multi-stage Docker build the frontend stage has no Go toolchain
+# and the call fails. Depend only on generate-ui here; the backend stage is
+# responsible for running generate-backend before compiling the binary.
 .PHONY: ui-only
-ui-only: ui-env generate ui
+ui-only: ui-env generate-ui
 	cd ui/v2.5 && npm run build
 
 .PHONY: zip-ui
