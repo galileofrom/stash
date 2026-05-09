@@ -1,0 +1,64 @@
+"""Galileo fork: media request workflow types."""
+
+enum MediaRequestStatus {
+  PENDING
+  APPROVED
+  DOWNLOADING
+  IMPORTED
+  REJECTED
+  FAILED
+}
+
+enum MediaReleaseProtocol {
+  USENET
+  TORRENT
+  UNKNOWN
+}
+
+type MediaRelease {
+  id: ID!
+  request_id: ID!
+  indexer: String!
+  indexer_id: Int
+  guid: String!
+  title: String!
+  download_url: String
+  magnet_url: String
+  info_url: String
+  size: Int64!
+  seeders: Int!
+  leechers: Int!
+  publish_date: Time
+  category: String
+  protocol: MediaReleaseProtocol!
+  selected: Boolean!
+  grab_status: String
+  grab_error: String
+  created_at: Time!
+}
+
+type MediaRequest {
+  id: ID!
+  title: String!
+  studio: String
+  external_id: String
+  external_source: String
+  status: MediaRequestStatus!
+  requested_by: String
+  notes: String
+  releases: [MediaRelease!]!
+  created_at: Time!
+  updated_at: Time!
+}
+
+input MediaRequestCreateInput {
+  title: String!
+  studio: String
+  external_id: String
+  external_source: String
+  notes: String
+}
+
+input MediaRequestFilter {
+  status: MediaRequestStatus
+}

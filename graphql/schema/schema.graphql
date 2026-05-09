@@ -276,6 +276,10 @@ type Query {
 
   # LatestVersion
   latestversion: LatestVersion!
+
+  # Galileo fork: media requests
+  findMediaRequest(id: ID!): MediaRequest
+  findMediaRequests(filter: MediaRequestFilter): [MediaRequest!]!
 }
 
 type Mutation {
@@ -594,6 +598,18 @@ type Mutation {
   addTempDLNAIP(input: AddTempDLNAIPInput!): Boolean!
   "Removes an IP address from the temporary DLNA whitelist"
   removeTempDLNAIP(input: RemoveTempDLNAIPInput!): Boolean!
+
+  # Galileo fork: media request workflow
+  "Creates a media request and returns it. Releases are populated by mediaRequestSearch."
+  mediaRequestCreate(input: MediaRequestCreateInput!): MediaRequest!
+  "Triggers a Prowlarr search for the request and persists ranked releases."
+  mediaRequestSearch(id: ID!): MediaRequest!
+  "Approves a release for download via Prowlarr's grab endpoint."
+  mediaRequestApprove(release_id: ID!): MediaRequest!
+  "Marks a request as rejected without sending it to a download client."
+  mediaRequestReject(id: ID!, reason: String): MediaRequest!
+  "Removes a request and any associated releases/downloads."
+  mediaRequestDestroy(id: ID!): Boolean!
 }
 
 type Subscription {
