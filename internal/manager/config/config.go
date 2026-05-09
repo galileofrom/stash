@@ -167,6 +167,17 @@ const (
 	RequestsAutoApprove     = "requests.auto_approve"
 	RequestsRequireApproval = "requests.require_approval"
 
+	// Ranking + filtering for release search results.
+	// PreferProtocol takes "usenet" | "torrent" | "auto".
+	RequestsPreferProtocol = "requests.prefer_protocol"
+	RequestsMinSeeders     = "requests.min_seeders"
+	RequestsMaxSizeBytes   = "requests.max_size_bytes"
+	RequestsRankUsenetBoost   = "requests.rank.usenet_boost"
+	RequestsRankTorrentBoost  = "requests.rank.torrent_boost"
+	RequestsRankSeederWeight  = "requests.rank.seeder_weight"
+	RequestsRankFreeleechBoost = "requests.rank.freeleech_boost"
+	RequestsRankAgeDecayDays  = "requests.rank.age_decay_days"
+
 	PythonPath = "python_path"
 
 	// plugin options

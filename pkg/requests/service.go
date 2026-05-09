@@ -31,6 +31,7 @@ type Service struct {
 	cfg      Config
 	repo     Repository
 	prowlarr *ProwlarrClient
+	ranker   Ranker
 }
 
 func NewService(cfg Config, repo Repository) *Service {
@@ -38,7 +39,7 @@ func NewService(cfg Config, repo Repository) *Service {
 	if cfg.ProwlarrEnabled {
 		pw = NewProwlarrClient(cfg.ProwlarrClientConfig())
 	}
-	return &Service{cfg: cfg, repo: repo, prowlarr: pw}
+	return &Service{cfg: cfg, repo: repo, prowlarr: pw, ranker: NewRanker(cfg)}
 }
 
 // SearchReleases queries Prowlarr for a candidate request and persists
@@ -85,6 +86,8 @@ func (s *Service) SearchReleases(ctx context.Context, requestID int) ([]*Release
 			Protocol:    r.Protocol,
 		})
 	}
+
+	releases = s.ranker.Rank(releases)
 
 	if err := s.repo.UpsertReleases(ctx, requestID, releases); err != nil {
 		return nil, err

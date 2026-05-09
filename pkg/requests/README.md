@@ -13,7 +13,15 @@ in a stash-watched library path for normal stash scanning to pick up.
 - `models.go` — domain types (`MediaRequest`, `Release`, `Download`)
 - `config.go` — runtime config + validation
 - `prowlarr.go` — Prowlarr v1 REST client (`/api/v1/search`, grab, ping)
-- `service.go` — orchestration (search → persist releases → approve → grab)
+- `ranker.go` — score + filter releases by protocol preference, seeders, size, age
+- `service.go` — orchestration (search → rank → persist → approve → grab)
+
+## Ranking
+
+`PreferProtocol` controls protocol preference: `usenet`, `torrent`, or
+`auto` (additive `RankWeights` only). `MinSeeders` and `MaxSizeBytes`
+hard-filter torrents; usenet is exempt from min seeders. Age decay
+demotes releases older than `RankWeights.AgeDecayDays`.
 
 ## Status
 

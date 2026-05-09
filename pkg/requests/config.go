@@ -8,15 +8,54 @@ import (
 
 // Config is the runtime configuration for the requests subsystem,
 // resolved from the stash config file or environment.
+// ProtocolPreference controls how releases are ordered when both Usenet and
+// torrent results come back from Prowlarr. "usenet" or "torrent" hard-prefer
+// one protocol over the other; "auto" leaves it to RankWeights so each release
+// competes on its own score.
+type ProtocolPreference string
+
+const (
+	PreferUsenet  ProtocolPreference = "usenet"
+	PreferTorrent ProtocolPreference = "torrent"
+	PreferAuto    ProtocolPreference = "auto"
+)
+
+// RankWeights are the per-attribute multipliers used when ranking release
+// candidates. Higher values pull the corresponding attribute toward the top
+// of the list. Negative values are valid and demote a release.
+type RankWeights struct {
+	UsenetBoost   float64 // additive score for usenet releases (default 50)
+	TorrentBoost  float64 // additive score for torrent releases (default 0)
+	SeederWeight  float64 // multiplier on seeder count (default 1)
+	FreeleechBoost float64 // additive score when indexer flags freeleech (default 5)
+	AgeDecayDays  float64 // releases older than this lose score (default 30)
+}
+
+func DefaultRankWeights() RankWeights {
+	return RankWeights{
+		UsenetBoost:    50,
+		TorrentBoost:   0,
+		SeederWeight:   1,
+		FreeleechBoost: 5,
+		AgeDecayDays:   30,
+	}
+}
+
 type Config struct {
-	ProwlarrEnabled        bool
-	ProwlarrURL            string
-	ProwlarrAPIKey         string
-	ProwlarrCategories     []int
-	ProwlarrIndexerIDs     []int
-	ProwlarrTimeout        time.Duration
-	LibraryPath            string
-	RequireApproval        bool
+	ProwlarrEnabled    bool
+	ProwlarrURL        string
+	ProwlarrAPIKey     string
+	ProwlarrCategories []int
+	ProwlarrIndexerIDs []int
+	ProwlarrTimeout    time.Duration
+	LibraryPath        string
+	RequireApproval    bool
+
+	// Ranking + filtering
+	PreferProtocol ProtocolPreference
+	MinSeeders     int
+	MaxSizeBytes   int64
+	RankWeights    RankWeights
 }
 
 func (c Config) Validate() error {
