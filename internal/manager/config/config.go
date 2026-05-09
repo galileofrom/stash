@@ -156,6 +156,17 @@ const (
 	// stash-box options
 	StashBoxes = "stash_boxes"
 
+	// Galileo fork: media request feature
+	ProwlarrEnabled         = "prowlarr.enabled"
+	ProwlarrURL             = "prowlarr.url"
+	ProwlarrAPIKey          = "prowlarr.api_key"
+	ProwlarrCategories      = "prowlarr.categories"
+	ProwlarrIndexerIDs      = "prowlarr.indexer_ids"
+	ProwlarrTimeoutSeconds  = "prowlarr.timeout_seconds"
+	RequestsLibraryPath     = "requests.library_path"
+	RequestsAutoApprove     = "requests.auto_approve"
+	RequestsRequireApproval = "requests.require_approval"
+
 	PythonPath = "python_path"
 
 	// plugin options
